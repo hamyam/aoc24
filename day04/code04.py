@@ -37,7 +37,7 @@ def searchChar(matrix, pos, character, direction) ->bool:
 
 
 if __name__ == '__main__':
-    matrix = parseInput()
+    matrix = parseInput('input.dat')
     x_pos = findChars(matrix, 'X')
     
     hits = 0

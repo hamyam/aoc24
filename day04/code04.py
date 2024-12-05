@@ -36,8 +36,13 @@ def searchChar(matrix, pos, character, direction) ->bool:
         return False
 
 
+
+
+
+
 if __name__ == '__main__':
     matrix = parseInput('input.dat')
+    # matrix = parseInput()
     x_pos = findChars(matrix, 'X')
     
     hits = 0
@@ -51,3 +56,19 @@ if __name__ == '__main__':
                         hits += 1
 
     print(f'found {hits} XMAS.')
+    
+    a_pos = findChars(matrix, 'A')
+    
+    xs = []
+    
+    h = [['.' for _ in range(10)] for _ in range(10)]
+    
+    for a in a_pos: 
+        if (searchChar(matrix, a, 'M', [1,1]) and searchChar(matrix, a, 'S', [-1, -1])) or  (searchChar(matrix, a, 'M', [-1,-1]) and searchChar(matrix, a, 'S', [1, 1])):
+            if( searchChar(matrix, a, 'M', [ 1,-1]) and searchChar(matrix, a, 'S', [-1, 1])) or (searchChar(matrix, a, 'M', [-1, 1]) and searchChar(matrix, a, 'S', [ 1,-1])):
+                # h[a[0]][a[1]] = 'A'
+                xs.append(a)
+        
+    print('found ', len(xs), ' X-Mas')
+    
+    

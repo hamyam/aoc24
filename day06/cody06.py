@@ -8,10 +8,19 @@ def parseMaze(filename='sample.dat'):
             
     return maze
 
+def turnRight(d):
+    match d:
+        case [-1,0]:
+            d = [0,1]
+        case [0,1]:
+            d = [1,0]
+        case [1,0]:
+            d = [0,-1]
+        case [0,-1]:  
+            d = [-1,0]      
+    return d
 
-
-
-def part1(maze): 
+def solveMaze(maze): 
     start = [-1,-1]
     
     imax = len(maze[0])
@@ -32,32 +41,25 @@ def part1(maze):
         # mark as visited
         maze[pos[0]][pos[1]] = 'X'
         
+        ii = pos[0]+d[0] 
+        jj = pos[1]+d[1]
         
         # check ahead if tile exists
-        if pos[0]+d[0] >= imax or pos[0]+d[0] < 0 or pos[1]+d[1] >= jmax or pos[1]+d[1] < 0: 
+        if ii >= imax or ii < 0 or jj >= jmax or jj < 0: 
             for row in maze:
                 print(''.join(row))
             return maze
 
-        
-        # print(pos[0]+d[0],pos[1]+d[1])
                 
         # check ahead for obstacle
-        if maze[pos[0]+d[0]][pos[1]+d[1]] == '#': 
-            match d:
-                case [-1,0]:
-                    d = [0,1]
-                case [0,1]:
-                    d = [1,0]
-                case [1,0]:
-                    d = [0,-1]
-                case [0,-1]:  
-                    d = [-1,0]      
+        if maze[ii][jj] == '#': 
+            d = turnRight(d)
                     
 
         # step forward 
         pos[0] += d[0]
         pos[1] += d[1]
+        
     
 def countX(maze):
     x = 0
@@ -71,8 +73,12 @@ def countX(maze):
 if __name__ == '__main__':
     maze = parseMaze('input.dat')  
     
-    visited = part1(maze) 
-    print(countX(maze))
+    visited = solveMaze(maze.copy()) 
+    benchX = countX(visited)
+    
+    
+    
+    
     
 
     

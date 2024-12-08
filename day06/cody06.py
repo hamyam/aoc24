@@ -52,7 +52,8 @@ def solveMaze(maze):
                     
         # check ahead for obstacle
         if maze[ii][jj] == '#': 
-            d = turnRight(d)
+            while(maze[pos[0] + d[0]][pos[1] + d[1]] == '#'):
+                d = turnRight(d)
                     
 
         # step forward 
@@ -112,8 +113,9 @@ def solveDirectionalMaze(maze, start):
         # check ahead for obstacle
         if maze[ii][jj] == '#': 
             # maze[pos[0]][pos[1]] = '+'
-            d = turnRight(d)
-        
+            while(maze[pos[0] + d[0]][pos[1] + d[1]] == '#'):
+                d = turnRight(d)
+                
         # detect closed loop
         match (maze[ii][jj], d[0], d[1]):
             case ('^', -1 , 0):

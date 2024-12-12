@@ -131,3 +131,6 @@ dist
 
 
 # aoc specific
+cookie
+
+venv/

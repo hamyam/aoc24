@@ -50,8 +50,8 @@ if [ -f "venv/Scripts/activate" ]; then
 
         # Input in input.dat schreiben
         aocd $formatted_number $year > "$day/input.dat"
-        aocd $formatted_number $year --example > "$day/sample.dat"
         curl -s https://adventofcode.com/2024/day/$number | pandoc -f html -t markdown -o "$day/task${formatted_number}.md"
+        aocd $formatted_number $year --example >> "$day/task${formatted_number}.md"
 
         echo "Daten erfolgreich in '$day/input.dat', '$day/task${formatted_number}.md' und '$day/sample.dat' geschrieben."
     else

@@ -48,22 +48,74 @@ def sortMap(dmap: List[int|None]):
 
 def sortPart2(dmap: List[int|None]):
     right = len(dmap)-1
+    left = 0
+    done = set()
     
-    while dmap[right] == None:
-        right -= 1
-        
-    print('found first num at right: ', right) 
-    print(dmap, dmap[right-1])
-    
-    while right >= 0:
-        num = dmap[right]
-        l = 0
-        while num == dmap[right-l]:
-            l += 1
+    if dmap[right] == None:
+        while dmap[right] == None:
+            right -= 1
             
-        print(num, l)
-        right -= 1
-               
+    if dmap[0] != None:
+        while dmap[left] != None:
+            left += 1
+        
+    while right > 0:
+        n = dmap[right]
+        if n in done or n == None:
+            right -= 1
+            continue
+        # find len of blocks
+        j = right
+        l = 0
+        while dmap[j] == n:
+            l += 1
+            j -= 1
+            
+        right -= l
+        # print("n:", n, "len", l, "right", right)
+        
+        # find gap with size l and i < j
+        i = 0
+        istart = left-1
+        gap = 0
+        while i < j:
+            if n in done:
+                break
+            if dmap[i] != None:
+                i += 1
+                gap = 0
+                continue
+            else:
+                istart = i
+                while dmap[i] == None:
+                    gap += 1
+                    if gap == l:
+                        for ii in range(gap):
+                            dmap[istart + ii] = n
+                            dmap[right + ii + 1] = None
+                            done.add(n)
+                        break
+                    else:
+                        i += 1
+            # i += 1
+        # print("istart:", istart, "gap", gap)
+        # print(dmap)
+    return dmap
+            
+
+            
+
+            
+        
+        
+        
+        
+        
+        
+        
+    
+    
+
 def calcChecksum(dmap: List[int|None]) -> int: 
     cs = 0
     print('calc checksum')
@@ -81,13 +133,13 @@ def findNan(dmap: List[int|None])->list[int]:
         
 
 if __name__ == '__main__':
-    m = parseInput()
-    # m = parseInput('input.dat')
+    # m = parseInput()
+    m = parseInput('input.dat')
     
     fm = buildMap(m)
     # print(fm)
     # sortedMap = sortMap(fm)
     sortedMap = sortPart2(fm)
     # print(sortedMap)
-    # checksum = calcChecksum(sortedMap)
-    # print('checksum: ', checksum)
+    checksum = calcChecksum(sortedMap)
+    print('checksum: ', checksum)

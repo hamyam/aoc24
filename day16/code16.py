@@ -1,6 +1,8 @@
 import numpy as np 
 import heapq
 
+import timeit
+
 def parseMaze(fn="sample.dat"):
     m = []
     with open(fn, 'r') as f:
@@ -121,4 +123,76 @@ def part1():
     mm = combinePaths(bestSols, m)
     # print("\n".join("".join(row) for row in mm))
     print("found ", len(bestSols), " sols with ", np.sum(mm == "X"), " tiles")
-part1()
+    
+    
+def p(maze):
+    # m = parseMaze()
+    m = maze
+    start = np.array(next((i, row.index('S')) for i, row in enumerate(m) if 'S' in row))
+    goal = tuple(next((i, row.index('E')) for i, row in enumerate(m) if 'E' in row))
+    m = np.array(m)
+    debug = False
+    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    paths = []
+    heapq.heappush(paths, Path(start, (0, 1), 0, 0, 0, [start]))
+    sols: list[Path] = []
+    bestSols = []
+    
+    while paths:     
+        nextPath = heapq.heappop(paths)  # Günstigster Pfad
+        
+        # if nextPath.position == (8, 15):
+        #     debug = True
+        
+        if debug:
+            input("next")
+            print_maze_with_path(m, nextPath)
+            
+        
+        if nextPath.position == goal:
+            sols.append(nextPath)  # Add additional optimal path
+            continue
+
+        for d in dirs:
+            if d == (-nextPath.lastD[0], -nextPath.lastD[1]):
+                continue
+
+            nextPos = tuple(np.array(nextPath.position) + np.array(d))
+
+            # Skip invalid positions or walls
+            if not (0 <= nextPos[0] < m.shape[0] and 0 <= nextPos[1] < m.shape[1]):
+                if debug:
+                    print(f"cant visit {nextPos}")
+                continue
+            if m[nextPos] == "#":
+                continue
+
+            # Check if the position can be visited with a better weight
+            newWeight = nextPath.weight + (1 if nextPath.lastD == d else 1001)
+            if not Path.can_visit(nextPos, newWeight):
+                if debug:
+                    print(f"cant visit cause of weight {nextPos}")
+                continue
+
+            # Push the new path into the heap
+            p = Path(nextPos, d, newWeight, nextPath.straights + (1 if nextPath.lastD == d else 0), nextPath.turns + (0 if nextPath.lastD == d else 1), nextPath.tiles[:])
+            p.tiles.append(nextPos)
+            heapq.heappush(paths, p)
+
+    mi = min(sols).weight
+    for s in sols:
+        if s.weight == mi:        
+            bestSols.append(s)
+    
+    mm = combinePaths(bestSols, m)
+    # print("\n".join("".join(row) for row in mm))
+    print("found ", len(bestSols), " sols with ", np.sum(mm == "X"), " tiles")
+
+
+
+
+
+m = parseMaze("input.dat")
+r = timeit.timeit(lambda: p(m), number=10)
+
+print(r/10)

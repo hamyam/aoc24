@@ -18,7 +18,7 @@ get_number() {
 number=$(get_number "$1")
 
 # Überprüfen, ob die Eingabe eine gültige Zahl ist
-if ! [[ "$number" =~ ^[0-9]+$ ]] || [ "$number" -lt 1 ] || [ "$number" -gt 24 ]; then
+if ! [[ "$number" =~ ^[0-9]+$ ]] || [ "$number" -lt 1 ] || [ "$number" -gt 25 ]; then
     echo "Ungültige Eingabe. Bitte eine Zahl zwischen 1 und 24 eingeben."
     exit 1
 fi

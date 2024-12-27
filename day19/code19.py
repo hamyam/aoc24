@@ -1,53 +1,84 @@
 import itertools
 import tqdm
+from  functools import cache
 
 
-def parseInput(fn="sample.dat"):
-    colors = []
+def parseInput(fn="sample.dat") -> tuple[list[str], list[str]]:
     patterns = []
+    towels = []
     
     with open(fn, "r") as f: 
-        colors = f.readline().strip().split(", ")
+        patterns = f.readline().strip().split(", ")
         
         for l in f:
             if l.strip() == "":
                 continue
-            patterns.append(l.strip())
+            towels.append(l.strip())
 
-    return colors, patterns
+    return tuple(patterns), towels
 
 
+@cache
+def can_construct(target: str, patterns: tuple[str]) -> bool:
+    
+    if target == "": # pattern is empty -> can be constructed
+        return True
+
+    for pattern in patterns: # check if any pattern is in front of string
+        if target.startswith(pattern):
+            # recursively call func with rest of string
+            if can_construct(target.removeprefix(pattern), patterns):
+                return True # last part of string matches a pattern
+            
+    return False
+
+
+@cache
+def count_construct(target: str, patterns: tuple[str]) -> int:
+    
+    if target == "": # pattern is empty -> can be constructed
+        return 1
+
+    count = 0
+
+    for pattern in patterns: # check if any pattern is in front of string
+        if target.startswith(pattern):
+            # recursively call func with rest of string
+            count += count_construct(target.removeprefix(pattern), patterns)
+            
+    return count
 
 def part1():
-    colors, patterns = parseInput()
+    patterns, towels = parseInput('input.dat')
+    sum = 0
     
-    print(colors)
-    print(patterns)
-    
-    poss = []
-    for p in patterns:
-        print(p)
-        
-        i = 0
-        done = False
-        p_list = list(p)  # Convert string to list
+    for t in towels:
+        if can_construct(t, patterns):
+            sum += 1
+    return sum
 
-        while i < len(p_list):
-            print(i, p_list[:i+1])
-            if ''.join(p_list[:i+1]) in colors:
-                print("Found", ''.join(p_list[:i+1]))
-                for _ in range(i):
-                    if len(p_list) > 0:
-                        p_list.pop(0)
-                    else:
-                        done = True                
-                i = 0
-            else:
-                i += 1
-                
-            if done:
-                poss.append(''.join(p_list))  # Convert list back to string
-                
-        print(poss)
+def part2():
+    patterns, towels = parseInput('input.dat')
+    # patterns, towels = parseInput()
+    sum = 0    
+    for t in towels:
+        i = count_construct(t, patterns)
+        # print(t, "-> ", i)
+        sum += i
+    return sum
 
-part1()
+
+
+
+import time
+start = time.time_ns()
+print(part2())
+print(f'dur: {(time.time_ns()-start):,}')
+
+import timeit
+
+t = timeit.timeit(part2, number=10)
+print(f'avg: {t/10}s')
+
+
+
